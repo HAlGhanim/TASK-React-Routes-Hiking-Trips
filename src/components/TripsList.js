@@ -1,13 +1,23 @@
 import React, { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import tripsData from "../tripsData";
 import SearchBar from "./SearchBar";
 import TripItem from "./TripItem";
 
 function TripsList() {
   const [query, setQuery] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
   const trips = tripsData
     .filter((trip) => trip.name.toLowerCase().includes(query.toLowerCase()))
     .map((trip, index) => <TripItem trip={trip} key={index} />);
+  const difficultyFilter = trips.filter((trip) => {
+    const difficulty = searchParams.get("difficulty");
+    if (!difficulty) {
+      return true;
+    }
+    const tripDifficulty = trip.difficulty.toLowerCase();
+    return tripDifficulty === difficulty;
+  });
   return (
     <section className="page-section portfolio" id="portfolio">
       <div className="container">
@@ -17,9 +27,24 @@ function TripsList() {
         <br />
         <SearchBar setQuery={setQuery} />
         <center>
-          <button className="btn btn-primary btn-xl">Easy</button>
-          <button className="btn btn-primary btn-xl">Moderate</button>
-          <button className="btn btn-primary btn-xl">Hard</button>
+          <button
+            className="btn btn-primary btn-xl"
+            onClick={() => setSearchParams({ difficulty: "easy" })}
+          >
+            Easy
+          </button>
+          <button
+            className="btn btn-primary btn-xl"
+            onClick={() => setSearchParams({ difficulty: "moderate" })}
+          >
+            Moderate
+          </button>
+          <button
+            className="btn btn-primary btn-xl"
+            onClick={() => setSearchParams({ difficulty: "hard" })}
+          >
+            Hard
+          </button>
         </center>
         <div className="divider-custom">
           <div className="divider-custom-line"></div>
