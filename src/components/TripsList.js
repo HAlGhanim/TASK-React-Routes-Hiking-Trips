@@ -7,17 +7,18 @@ import TripItem from "./TripItem";
 function TripsList() {
   const [query, setQuery] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
-  const trips = tripsData
-    .filter((trip) => trip.name.toLowerCase().includes(query.toLowerCase()))
-    .map((trip, index) => <TripItem trip={trip} key={index} />);
-  const difficultyFilter = trips.filter((trip) => {
-    const difficulty = searchParams.get("difficulty");
-    if (!difficulty) {
-      return true;
-    }
-    const tripDifficulty = trip.difficulty.toLowerCase();
-    return tripDifficulty === difficulty;
-  });
+  const trips = tripsData.filter((trip) =>
+    trip.name.toLowerCase().includes(query.toLowerCase())
+  );
+  const difficulty = searchParams.get("difficulty");
+  const difficultyFilter = difficulty
+    ? trips.filter((trip) => trip.difficulty === difficulty)
+    : trips;
+
+  const tripItems = difficultyFilter.map((trip, index) => (
+    <TripItem trip={trip} key={index} />
+  ));
+
   return (
     <section className="page-section portfolio" id="portfolio">
       <div className="container">
@@ -54,7 +55,7 @@ function TripsList() {
           <div className="divider-custom-line"></div>
         </div>
 
-        <div className="row justify-content-center">{trips}</div>
+        <div className="row justify-content-center">{tripItems}</div>
       </div>
     </section>
   );
